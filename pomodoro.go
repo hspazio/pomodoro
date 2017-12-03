@@ -47,10 +47,11 @@ L:
 		case <-tick:
 			fmt.Printf("#")
 		case <-alarm:
-			res[today()]++
-			message := fmt.Sprintf("%d cycles today", res[today()])
+			td := today()
+			res[td]++
+			message := fmt.Sprintf("%d cycles today", res[td])
 			var suggestion string
-			if res[today()]%4 == 0 {
+			if res[td]%4 == 0 {
 				suggestion = "take a longer break"
 			} else {
 				suggestion = "rest for 5 minutes"
@@ -62,7 +63,7 @@ L:
 				exit(err)
 			}
 
-			if err = save(res); err != nil {
+			if err = save(&res); err != nil {
 				exit(err)
 			}
 			break L
@@ -81,7 +82,7 @@ func load(r *results) error {
 	return nil
 }
 
-func save(r results) error {
+func save(r *results) error {
 	b, err := json.Marshal(r)
 	if err != nil {
 		return fmt.Errorf("could not encode json %v", err)
